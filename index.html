@@ -9,15 +9,34 @@
 </head>
 
 <body>
+    <div class="container">
+        <div id="enterUser">
+            <h1>Choose your username:</h1>
+            <input type="text" id="chooseUser">
+            <button id="userChoice">Submit</button>
+        </div>
+        
+        <div id="chat">
+            <div id="chatlog"></div>
+            <input type="text" id="messageText" value="">
+            <button id="postMessage">Post</button>
+        </div>
+    </div>
 
-<input type="text" id="chooseUser">
-<button id="userChoice">Submit</button>
-<div id="chatlog"></div>
-<input type="text" id="messageText" value="">
-<button id="postMessage">Post</button>
-<script src="https://www.gstatic.com/firebasejs/5.3.1/firebase.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-            crossorigin="anonymous"></script>
+    <!-- Bootstrap CDN -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+    <!-- Custom CSS-->
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <!-- Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/5.3.1/firebase.js"></script>
+
+    <!-- JQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+
+    <!-- Custom Javascript-->
     <script src="assets/logic.js"></script>
 </body>
 
