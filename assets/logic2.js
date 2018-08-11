@@ -40,11 +40,13 @@ var player1wins;
 var player1losses;
 var player1name;
 var player1key;
+var player1choice;
 
 var player2wins;
 var player2losses;
 var player2name;
 var player2key;
+var player2choice;
 
 var player1Exists = false;
 var player2Exists = false;
@@ -52,13 +54,18 @@ var player2Exists = false;
 player1Ref.set({
     losses: 0,
     wins: 0,
-    name: "unknown"
+    name: "unknown",
+    key: "nothing",
+    choice: "nothing"
+
 })
 
 player2Ref.set({
     losses: 0,
     wins: 0,
-    name: "unknown"
+    name: "unknown",
+    key: "nothing",
+    choice: "nothing"
 })
 
 // When the client's connection state changes...
@@ -85,8 +92,6 @@ usersOnlineRef.on("value", function (snap) {
     // The number of online users is the number of children in the connections list.
     playerCount = snap.numChildren();
     console.log("playerCount " + playerCount);
-    player1Exists = false;
-    player2Exists = false;
 
     if (!playerDecided) {
         if (playerCount === 1) {
@@ -103,13 +108,14 @@ usersOnlineRef.on("value", function (snap) {
             console.log("Others are already playing");
         }
     } else {
-        if (snap.val().key === player1key) {
-            console.log("player1 still here");
-            player1Exists = true;
-        } else if (snap.val().key === player2key) {
-            console.log("player1 still here");
-            player2Exists = true;
-        }
+        // if (snap.val().key === player1key) {
+        //     console.log("player1 still here");
+        //     player1Exists = true;
+        // } else if (snap.val().key === player2key) {
+        //     console.log("player1 still here");
+        //     player2Exists = true;
+        // }
+        
     }
 });
 
@@ -126,16 +132,17 @@ $("#userChoice").on("click", function (event) {
             losses: 0,
             wins: 0,
             name: currentUserName,
-            key: currentUserKey
+            key: currentUserKey,
+            choice: "nothing"
         })
     } else if (playerNumber === 2) {
         player2Ref.set({
             losses: 0,
             wins: 0,
             name: currentUserName,
-            key: currentUserKey
+            key: currentUserKey,
+            choice: "nothing"
         })
-
         turnCounterRef.set(1);
     } else {
         console.log("you can still chat");
@@ -151,23 +158,29 @@ $("#userChoice").on("click", function (event) {
 
 player1Ref.on("value", function (snapshot) {
     player1losses = snapshot.val().losses;
+    $("#1losses").text(player1losses);
     player1name = snapshot.val().name;
     player1wins = snapshot.val().wins;
+    $("#1wins").text(player1wins);
     player1key = snapshot.val().key;
+    player1choice = snapshot.val().choice;
 })
 
 player2Ref.on("value", function (snapshot) {
     player2losses = snapshot.val().losses;
+    $("#2losses").text(player2losses);
     player2name = snapshot.val().name;
     player2wins = snapshot.val().wins;
+    $("#2wins").text(player2wins);
     player2key = snapshot.val().key;
+    player2choice = snapshot.val().choice;
 })
 ///next turn, maybe you check if both users exist
 
 turnCounterRef.on("value", function (snapshot) {
     if (snapshot.val() === 1) {
         playerTurn(1);
-    } else {
+    } else if (snapshot.val() === 2) {
         playerTurn(2);
     }
 })
@@ -184,4 +197,67 @@ function playerTurn(turnNumber) {
             $("#options").html(optionsHTML);
         }
     }
+}
+
+$("#options").on("click", ".option", function () {
+    var choice = $(this).attr("data-name");
+    console.log(choice);
+
+    if (playerNumber === 1) {
+        database.ref("/players/player1/choice").set(choice);
+        player1choice = choice;
+        $("#options").empty();
+        turnCounterRef.set(2);
+    } else if (playerNumber === 2) {
+        player2choice = choice;
+        compare(player1choice, player2choice);
+        $("#options").empty();
+        turnCounterRef.set(1);
+    }
+})
+
+function compare(p1, p2) {
+    if (p1 === p2) {
+        console.log("It's a tie");
+    } else if (p1 === "rock") {
+        if (p2 === "paper") {
+            playerWins(2);
+        } else {
+            console.log("p1 wins");
+            playerWins(1);
+        }
+    } else if (p1 === "paper") {
+        if (p2 === "rock") {
+            console.log("p1 wins");
+            playerWins(1);
+        } else {
+            console.log("p2 wins");
+            playerWins(2);
+        }
+    } else {
+        if (p2 === "rock") {
+            console.log("p2 wins");
+            playerWins(2);
+        } else {
+            console.log("p1 wins");
+            playerWins(1);
+        }
+    }
+}
+
+function playerWins(winner){
+    if (winner === 1){
+        player1wins++;
+        database.ref("/players/player1/wins").set(player1wins);
+
+        player2losses++;
+        database.ref("/players/player2/losses").set(player2losses);
+    }else{
+        player2wins++;
+        database.ref("/players/player2/wins").set(player2wins);
+
+        player1losses++;
+        database.ref("/players/player1/losses").set(player1losses);
+    }
+
 }
