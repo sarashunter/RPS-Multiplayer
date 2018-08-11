@@ -10,16 +10,30 @@
 
 <body>
     <div class="container">
-        <div id="enterUser">
-            <h1>Choose your username:</h1>
-            <input type="text" id="chooseUser">
-            <button id="userChoice">Submit</button>
+        <div class="row">
+            <div id="enterUser">
+                <h1>Choose your username:</h1>
+                <input type="text" id="chooseUser">
+                <button id="userChoice">Submit</button>
+            </div>
         </div>
-        
-        <div id="chat">
-            <div id="chatlog"></div>
-            <input type="text" id="messageText" value="">
-            <button id="postMessage">Post</button>
+        <div class="row">
+            <div id="gameDiv">
+                <div class="row">
+                    <div id="options"></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6" id="player1"></div>
+                    <div class="col-sm-6" id="player2"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div id="chat" class="col-sm-4">
+                <div id="chatlog"></div>
+                <input type="text" id="messageText" placeholder="Say something!">
+                <button id="postMessage">Post</button>
+            </div>
         </div>
     </div>
 
