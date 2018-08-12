@@ -12,6 +12,11 @@ firebase.initializeApp(config);
 var database = firebase.database();
 
 //This could potentially hold more than one chat in the future.
+//This could potentially hold more than one chat in the future.
+var chatsRef = database.ref("/chats");
+
+//Only chat for now.
+var mainChatRef = database.ref("/chats/mainChat");
 
 //Holds the user information for current connections.  Users get deleted when they get disconnected.
 var usersOnlineRef = database.ref("/usersOnline/");
@@ -32,7 +37,7 @@ var currentUserKey;
 
 var playerCount;
 
-var playerNumber;
+var playerNumber = 3;
 
 var playerDecided = false;
 
@@ -51,23 +56,45 @@ var player2choice;
 var player1Exists = false;
 var player2Exists = false;
 
-player1Ref.set({
-    losses: 0,
-    wins: 0,
-    name: "unknown",
-    key: "nothing",
-    choice: "nothing"
+var playerInstance;
 
+// player1Ref.set({
+//     losses: 0,
+//     wins: 0,
+//     name: "Player 1",
+//     key: "nothing",
+//     choice: "nothing"
+
+// })
+
+// player2Ref.set({
+//     losses: 0,
+//     wins: 0,
+//     name: "Player 2",
+//     key: "nothing",
+//     choice: "nothing"
+// })
+
+
+
+// firebase.database().ref().child("turnCounter")
+// .onDisconnect()
+// .set(0);
+
+
+firebase.database().ref().child("turnCounter")
+    .onDisconnect()
+    .set(0);
+
+var canPlayRef = database.ref("/canPlayRef/");
+
+canPlayRef.on("value", function(snapshot){
+    if (snapshot.val==="false" && playerCount >1 && playerNumber >1 ){
+    console.log("Users left.  Can't play");
+    }else if(snapshot.val==="false"){
+        canPlayRef.set("true");
+    }
 })
-
-player2Ref.set({
-    losses: 0,
-    wins: 0,
-    name: "unknown",
-    key: "nothing",
-    choice: "nothing"
-})
-
 // When the client's connection state changes...
 connectedRef.on("value", function (snap) {
 
@@ -99,11 +126,40 @@ usersOnlineRef.on("value", function (snap) {
             player1Exists = true;
             playerDecided = true;
             console.log("You are player 1");
+
+            player1Ref.set({
+                losses: 0,
+                wins: 0,
+                name: "Player 1",
+                key: "nothing",
+                choice: "nothing"
+
+            })
+
+            player2Ref.set({
+                losses: 0,
+                wins: 0,
+                name: "Player 2",
+                key: "nothing",
+                choice: "nothing"
+            })
+            firebase.database().ref().child("players")
+                .onDisconnect()
+                .remove();
+                firebase.database().ref().child("canplay")
+                .onDisconnect()
+                .set("false");
         } else if (playerCount === 2) {
             playerNumber = 2;
             player2Exists = true;
             playerDecided = true;
             console.log("You are player 2");
+            firebase.database().ref().child("players")
+                .onDisconnect()
+                .remove();
+                firebase.database().ref().child("canplay")
+                .onDisconnect()
+                .set("false");
         } else {
             console.log("Others are already playing");
         }
@@ -115,9 +171,15 @@ usersOnlineRef.on("value", function (snap) {
         //     console.log("player1 still here");
         //     player2Exists = true;
         // }
-        
+
     }
 });
+
+usersOnlineRef.on("child_removed", function (snapshot) {
+    if (snapshot.val.key === player1key) {
+        player1Exists
+    }
+})
 
 $("#userChoice").on("click", function (event) {
     event.preventDefault();
@@ -128,7 +190,7 @@ $("#userChoice").on("click", function (event) {
     //Set the name of the current user in user object to user's input.
 
     if (playerNumber === 1) {
-        player1Ref.set({
+        playerInstance = player1Ref.set({
             losses: 0,
             wins: 0,
             name: currentUserName,
@@ -136,7 +198,7 @@ $("#userChoice").on("click", function (event) {
             choice: "nothing"
         })
     } else if (playerNumber === 2) {
-        player2Ref.set({
+        playerInstance = player2Ref.set({
             losses: 0,
             wins: 0,
             name: currentUserName,
@@ -144,6 +206,7 @@ $("#userChoice").on("click", function (event) {
             choice: "nothing"
         })
         turnCounterRef.set(1);
+
     } else {
         console.log("you can still chat");
     }
@@ -160,6 +223,7 @@ player1Ref.on("value", function (snapshot) {
     player1losses = snapshot.val().losses;
     $("#1losses").text(player1losses);
     player1name = snapshot.val().name;
+    $("#player1name").text(player1name);
     player1wins = snapshot.val().wins;
     $("#1wins").text(player1wins);
     player1key = snapshot.val().key;
@@ -170,6 +234,7 @@ player2Ref.on("value", function (snapshot) {
     player2losses = snapshot.val().losses;
     $("#2losses").text(player2losses);
     player2name = snapshot.val().name;
+    $("#player2name").text(player2name);
     player2wins = snapshot.val().wins;
     $("#2wins").text(player2wins);
     player2key = snapshot.val().key;
@@ -178,18 +243,20 @@ player2Ref.on("value", function (snapshot) {
 ///next turn, maybe you check if both users exist
 
 turnCounterRef.on("value", function (snapshot) {
-    if (snapshot.val() === 1) {
+    if (snapshot.val() === 0) {
+        console.log("can't play");
+    }
+    else if (snapshot.val() === 1) {
         playerTurn(1);
     } else if (snapshot.val() === 2) {
         playerTurn(2);
     }
+
 })
 
 function playerTurn(turnNumber) {
 
-    if (!player1Exists && !player2Exists) {
-        console.log("A player left");
-    } else {
+    {
         if (playerNumber === turnNumber) {
 
             var optionsHTML = "<button id='rockBtn' class='option' data-name='rock'>Rock</button><button id='paperBtn' class='option' data-name='paper'>Paper</button><button id='scissorsBtn' class='option' data-name='scissors'>Scissors</button>";
@@ -245,14 +312,14 @@ function compare(p1, p2) {
     }
 }
 
-function playerWins(winner){
-    if (winner === 1){
+function playerWins(winner) {
+    if (winner === 1) {
         player1wins++;
         database.ref("/players/player1/wins").set(player1wins);
 
         player2losses++;
         database.ref("/players/player2/losses").set(player2losses);
-    }else{
+    } else {
         player2wins++;
         database.ref("/players/player2/wins").set(player2wins);
 
@@ -261,3 +328,45 @@ function playerWins(winner){
     }
 
 }
+
+
+
+////////////////////////////////////
+/////////Chat
+/////////
+
+//function that checks for new messages and runs when the page is loaded
+mainChatRef.limitToLast(8).on("child_added", function (snapshot) {
+
+    //create a div to show the message
+    var $messageDiv = $("<div>").text(snapshot.val().sender + ": " + snapshot.val().message);
+
+    //Append the single message to the chat log
+    $("#chatlog").append($messageDiv);
+
+})
+
+//Function called when post message button is cliced.
+$("#postMessage").on("click", function (event) {
+
+    event.preventDefault();
+
+    //Calls function that creates the message
+    addMessage($("#messageText").val());
+
+    //Clears input field for next message.
+    $("#messageText").val("");
+
+})
+
+//function to add new chat message
+function addMessage(messageString) {
+
+    mainChatRef.push({
+        sender: currentUserName,
+        message: messageString,
+        time: "now"
+    })
+
+}
+
