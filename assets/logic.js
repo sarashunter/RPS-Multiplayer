@@ -44,6 +44,8 @@ var player1name;
 var player1key;
 var player1choice;
 
+var player1Exists = false;
+
 //Variables to hold player 2's current information.
 var player2Ref = database.ref("/players/player2");
 var player2wins;
@@ -51,6 +53,8 @@ var player2losses;
 var player2name;
 var player2key;
 var player2choice;
+
+var player2Exists = false;
 
 var playerInstance;
 
@@ -83,55 +87,24 @@ usersOnlineRef.on("value", function (snap) {
     // The number of online users is the number of children in the users online list.
     playerCount = snap.numChildren();
 
-    if (!playerDecided) {
+    // if (!playerDecided) {
 
-        //Set user to player 1 if only player.
-        if (playerCount === 1) {
-            playerNumber = 1;
-            playerDecided = true;
-            console.log("You are player 1");
+    //     //Set user to player 1 if only player.
+    //     if (playerCount === 1) {
+    //         playerNumber = 1;
+    //         playerDecided = true;
+    //         console.log("You are player 1");
 
-            player1Ref.set({
-                losses: 0,
-                wins: 0,
-                name: "Player 1",
-                key: "nothing",
-                choice: "nothing"
 
-            })
 
-            player2Ref.set({
-                losses: 0,
-                wins: 0,
-                name: "Player 2",
-                key: "nothing",
-                choice: "nothing"
-            })
+    //         //else if there are 2, set them to player 2.
+    //     } else if (playerCount === 2) {
+    //         playerNumber = 2;
+    //         playerDecided = true;
 
-            //If player 1 leaves, remove the players data.
-            firebase.database().ref().child("players")
-                .onDisconnect()
-                .remove();
-
-            firebase.database().ref().child("turnCounter")
-                .onDisconnect()
-                .set(0);
-
-            //else if there are 2, set them to player 2.
-        } else if (playerCount === 2) {
-            playerNumber = 2;
-            playerDecided = true;
-            console.log("You are player 2");
-            firebase.database().ref().child("players")
-                .onDisconnect()
-                .remove();
-
-            firebase.database().ref().child("turnCounter")
-                .onDisconnect()
-                .set(0);
-        }
-        //else leave them as player 3.
-    }
+    //     }
+    //     //else leave them as player 3.
+    // }
 });
 
 //Choose a user name.  Put that into the players.
@@ -142,7 +115,7 @@ $("#userChoice").on("click", function (event) {
     currentUserName = $("#chooseUser").val();
 
     //Set the name of the current user in user object to user's input.
-    if (playerNumber === 1) {
+    if (!player1Exists) {
         playerInstance = player1Ref.set({
             losses: 0,
             wins: 0,
@@ -150,7 +123,18 @@ $("#userChoice").on("click", function (event) {
             key: currentUserKey,
             choice: "nothing"
         })
-    } else if (playerNumber === 2) {
+        playerNumber = 1;
+        player1Exists = true;
+
+        //If player 1 leaves, remove the players data.
+        firebase.database().ref().child("players/player1")
+            .onDisconnect()
+            .remove();
+
+        firebase.database().ref().child("turnCounter")
+            .onDisconnect()
+            .set(0);
+    } else if (!player2Exists) {
         playerInstance = player2Ref.set({
             losses: 0,
             wins: 0,
@@ -158,9 +142,19 @@ $("#userChoice").on("click", function (event) {
             key: currentUserKey,
             choice: "nothing"
         })
-
+        playerNumber = 2;
+        player2Exists = true;
         //Change turn counter to start game once player 2 is set.
         turnCounterRef.set(1);
+
+        console.log("You are player 2");
+        firebase.database().ref().child("players/player2")
+            .onDisconnect()
+            .remove();
+
+        firebase.database().ref().child("turnCounter")
+            .onDisconnect()
+            .set(0);
 
     } else {
         $("#options").text("Others are playing.  You can watch and chat.");
@@ -174,6 +168,7 @@ $("#userChoice").on("click", function (event) {
 //Keep player1 information up to date.
 player1Ref.on("value", function (snapshot) {
     if (snapshot.exists()) {
+        player1Exists = true;
         player1losses = snapshot.val().losses;
         $("#1losses").text(player1losses);
         player1name = snapshot.val().name;
@@ -182,12 +177,15 @@ player1Ref.on("value", function (snapshot) {
         $("#1wins").text(player1wins);
         player1key = snapshot.val().key;
         player1choice = snapshot.val().choice;
+    }else{
+        player1Exists=false;
     }
 })
 
 //Keep player2 information up to date.
 player2Ref.on("value", function (snapshot) {
     if (snapshot.exists()) {
+        player2Exists = true;
         player2losses = snapshot.val().losses;
         $("#2losses").text(player2losses);
         player2name = snapshot.val().name;
@@ -196,6 +194,8 @@ player2Ref.on("value", function (snapshot) {
         $("#2wins").text(player2wins);
         player2key = snapshot.val().key;
         player2choice = snapshot.val().choice;
+    }else{
+        player2Exists=false;
     }
 })
 
@@ -221,6 +221,8 @@ function playerTurn(turnNumber) {
             var optionsHTML = "<img src='assets/images/rock.jpg' id='rockBtn' class='option' data-name='rock'><img src='assets/images/paper.jpg' id='paperBtn' class='option' data-name='paper'><img src='assets/images/scissors.jpg' id='scissorsBtn' class='option' data-name='scissors'>";
 
             $("#options").html(optionsHTML);
+        }else if(playerNumber !== 3){
+            $("#options").text("Wait while your opponent chooses their battle weapon.");
         }
     }
 }
@@ -276,11 +278,19 @@ function compare(p1, p2) {
 
 function playerWins(winner) {
     if (winner === 1) {
+
+        var winner = $("<div>").text("Player 1 won.");
+
+        $("#player1").append.winner;
+        console.log("in here");
+        
         player1wins++;
         database.ref("/players/player1/wins").set(player1wins);
 
         player2losses++;
         database.ref("/players/player2/losses").set(player2losses);
+
+
     } else {
         player2wins++;
         database.ref("/players/player2/wins").set(player2wins);
