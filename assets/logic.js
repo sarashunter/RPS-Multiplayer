@@ -218,12 +218,13 @@ function playerTurn(turnNumber) {
     {
         if (playerNumber === turnNumber) {
 
-            var optionsHTML = "<button id='rockBtn' class='option' data-name='rock'>Rock</button><button id='paperBtn' class='option' data-name='paper'>Paper</button><button id='scissorsBtn' class='option' data-name='scissors'>Scissors</button>";
+            var optionsHTML = "<img src='assets/images/rock.jpg' id='rockBtn' class='option' data-name='rock'><img src='assets/images/paper.jpg' id='paperBtn' class='option' data-name='paper'><img src='assets/images/scissors.jpg' id='scissorsBtn' class='option' data-name='scissors'>";
 
             $("#options").html(optionsHTML);
         }
     }
 }
+
 
 //Options class on click function.  Locks in players choice and switches turn.
 $("#options").on("click", ".option", function () {
