@@ -9,12 +9,14 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container-fluid center-block">
         <div class="row">
-            <div id="enterUser">
-                <h1>Choose your username:</h1>
-                <input type="text" id="chooseUser">
-                <button id="userChoice">Submit</button>
+            <div id="enterUser" class="col-xs-12">
+                <div class="jumbotron">
+                    <h1>Choose your username:</h1>
+                    <input type="text" id="chooseUser">
+                    <button id="userChoice">Submit</button>
+                </div>
             </div>
         </div>
         <div class="row">
@@ -22,46 +24,70 @@
                 <div class="row">
                     <div id="options"></div>
                 </div>
-                <div class="row">
-                    <div class="col-xs-12 col-sm-6" id="player1">
-                        <h4><span id="player1name">Player 1</span></h4>
-                        Wins:
-                        <span id="1wins"></span>
-                        Losses:
-                        <span id="1losses"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-4" id="player1">
+                <div class="card">
+                    <h4 class="card-header">
+                        <span id="player1name">Player 1</span>
+                    </h4>
+                    <div class="card-body">
+                        <p class="card-text">Wins:
+                            <span id="1wins"></span>
+                        </p>
+                        <p class="card-text">
+                            Losses:
+                            <span id="1losses"></span>
+                        </p>
                     </div>
-                    <div class="col-xs-12 col-sm-6" id="player2">
-                        <h4><span id="player2name">Player 2</span></h4>
-                        Wins:
-                        <span id="2wins"></span>
-                        Losses:
-                        <span id="2losses"></span>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-4" id="player2">
+                <div class="card">
+                    <h4 class="card-header">
+                        <span id="player2name">Player 2</span>
+                    </h4>
+                    <div class="card-body">
+                        <p class="card-text">Wins:
+                            <span id="2wins"></span>
+                        </p>
+                        <p class="card-text">Losses:
+                            <span id="2losses"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div id="chat" class="col-xs-12 col-sm-4">
+                <div class="card">
+                    <h4 class="card-header">Chat </h4>
+                    <div class="card-body">
+                        <div id="chatlog"></div>
+                        <input type="text" id="messageText" placeholder="Say something!">
+                        <button id="postMessage">Post</button>
                     </div>
                 </div>
             </div>
 
-            <div id="chat" class="col-xs-12 col-md-4">
-                <div id="chatlog"></div>
-                <input type="text" id="messageText" placeholder="Say something!">
-                <button id="postMessage">Post</button>
-            </div>
-        </div>
+            <!-- Bootstrap CDN -->
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
-        <!-- Bootstrap CDN -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+            <!--Bootswatch-->
+            <link rel="stylesheet" href="https://bootswatch.com/4/slate/bootstrap.min.css">
 
-        <!-- Custom CSS-->
-        <link rel="stylesheet" href="assets/css/style.css">
+            <!-- Custom CSS-->
+            <link rel="stylesheet" href="assets/css/style.css">
 
-        <!-- Firebase CDN -->
-        <script src="https://www.gstatic.com/firebasejs/5.3.1/firebase.js"></script>
+            <!-- Firebase CDN -->
+            <script src="https://www.gstatic.com/firebasejs/5.3.1/firebase.js"></script>
 
-        <!-- JQuery CDN -->
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-            crossorigin="anonymous"></script>
+            <!-- JQuery CDN -->
+            <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+                crossorigin="anonymous"></script>
 
-        <!-- Custom Javascript-->
-        <script src="assets/logic.js"></script>
+            <!-- Custom Javascript-->
+            <script src="assets/logic.js"></script>
+
 </body>
 
 </html>
