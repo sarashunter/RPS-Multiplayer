@@ -56,7 +56,11 @@ var player2choice;
 
 var player2Exists = false;
 
+var ties = 0;
+
 var playerInstance;
+
+var tieCounterRef = database.ref("/tieCounter");
 
 //Function detects when player has been removed.  Displays warning.
 playersRef.on("child_removed", function (snapshot) {
@@ -87,25 +91,12 @@ usersOnlineRef.on("value", function (snap) {
     // The number of online users is the number of children in the users online list.
     playerCount = snap.numChildren();
 
-    // if (!playerDecided) {
-
-    //     //Set user to player 1 if only player.
-    //     if (playerCount === 1) {
-    //         playerNumber = 1;
-    //         playerDecided = true;
-    //         console.log("You are player 1");
-
-
-
-    //         //else if there are 2, set them to player 2.
-    //     } else if (playerCount === 2) {
-    //         playerNumber = 2;
-    //         playerDecided = true;
-
-    //     }
-    //     //else leave them as player 3.
-    // }
 });
+
+tieCounterRef.on("value", function (snap) {
+    ties = snap.val();
+    $(".ties").text(ties);
+})
 
 //Choose a user name.  Put that into the players.
 $("#userChoice").on("click", function (event) {
@@ -134,6 +125,10 @@ $("#userChoice").on("click", function (event) {
         firebase.database().ref().child("turnCounter")
             .onDisconnect()
             .set(0);
+
+        firebase.database().ref().child("tieCounter")
+            .onDisconnect()
+            .set(0);
     } else if (!player2Exists) {
         playerInstance = player2Ref.set({
             losses: 0,
@@ -146,6 +141,7 @@ $("#userChoice").on("click", function (event) {
         player2Exists = true;
         //Change turn counter to start game once player 2 is set.
         turnCounterRef.set(1);
+        tieCounterRef.set(0);
 
         console.log("You are player 2");
         firebase.database().ref().child("players/player2")
@@ -153,6 +149,10 @@ $("#userChoice").on("click", function (event) {
             .remove();
 
         firebase.database().ref().child("turnCounter")
+            .onDisconnect()
+            .set(0);
+
+        firebase.database().ref().child("tieCounter")
             .onDisconnect()
             .set(0);
 
@@ -177,8 +177,8 @@ player1Ref.on("value", function (snapshot) {
         $("#1wins").text(player1wins);
         player1key = snapshot.val().key;
         player1choice = snapshot.val().choice;
-    }else{
-        player1Exists=false;
+    } else {
+        player1Exists = false;
     }
 })
 
@@ -194,8 +194,8 @@ player2Ref.on("value", function (snapshot) {
         $("#2wins").text(player2wins);
         player2key = snapshot.val().key;
         player2choice = snapshot.val().choice;
-    }else{
-        player2Exists=false;
+    } else {
+        player2Exists = false;
     }
 })
 
@@ -221,7 +221,7 @@ function playerTurn(turnNumber) {
             var optionsHTML = "<img src='assets/images/rock.jpg' id='rockBtn' class='option' data-name='rock'><img src='assets/images/paper.jpg' id='paperBtn' class='option' data-name='paper'><img src='assets/images/scissors.jpg' id='scissorsBtn' class='option' data-name='scissors'>";
 
             $("#options").html(optionsHTML);
-        }else if(playerNumber !== 3){
+        } else if (playerNumber !== 3) {
             $("#options").text("Wait while your opponent chooses their battle weapon.");
         }
     }
@@ -249,6 +249,8 @@ $("#options").on("click", ".option", function () {
 //Compare the users guesses to determine a winner.
 function compare(p1, p2) {
     if (p1 === p2) {
+        ties++;
+        tieCounterRef.set(ties);
         console.log("It's a tie");
     } else if (p1 === "rock") {
         if (p2 === "paper") {
@@ -283,7 +285,7 @@ function playerWins(winner) {
 
         $("#player1").append.winner;
         console.log("in here");
-        
+
         player1wins++;
         database.ref("/players/player1/wins").set(player1wins);
 
