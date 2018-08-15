@@ -116,6 +116,7 @@ $("#userChoice").on("click", function (event) {
         })
         playerNumber = 1;
         player1Exists = true;
+        $("#options").html("<h3>Waiting for opponent</h3>");
 
         //If player 1 leaves, remove the players data.
         firebase.database().ref().child("players/player1")
@@ -222,7 +223,7 @@ function playerTurn(turnNumber) {
 
             $("#options").html(optionsHTML);
         } else if (playerNumber !== 3) {
-            $("#options").text("Wait while your opponent chooses their battle weapon.");
+            $("#options").html("<h3>Wait while your opponent chooses their battle weapon.</h3>");
         }
     }
 }
