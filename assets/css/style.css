@@ -2,3 +2,11 @@
 .jumbotron{
     background-color: #000000;
 }
+
+#chatlog > :nth-child(even){
+    background-color: #515960;
+}
+
+#chatlog > div{
+    padding:2px;
+}

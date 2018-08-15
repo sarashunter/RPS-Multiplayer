@@ -10,12 +10,12 @@
 
 <body>
     <div class="container-fluid center-block">
-            <div class="jumbotron" class="col-12">
-                <div class="container">
-                    <div id="enterUser">
-                <h1>Choose your username:</h1>
-                <input type="text" id="chooseUser">
-                <button id="userChoice">Submit</button>
+        <div class="jumbotron" class="col-12">
+            <div class="container">
+                <div id="enterUser">
+                    <h1>Choose your username:</h1>
+                    <input type="text" id="chooseUser" class="form-control">
+                    <button id="userChoice" class="btn btn-primary">Submit</button>
                 </div>
             </div>
             <div id="gameDiv" class="col-xs-12 col-md-8 mb-2">
@@ -65,30 +65,34 @@
                     <h4 class="card-header">Chat </h4>
                     <div class="card-body">
                         <div id="chatlog"></div>
-                        <input type="text" id="messageText" placeholder="Say something!">
-                        <button id="postMessage">Post</button>
+                        <br>
+                        <div id="submitChat">
+                            <!-- <input class="form-control" type="text" id="messageText" placeholder="Say something!"><br>
+                            <button class="btn btn-primary" id="postMessage">Post</button> -->
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Bootstrap CDN -->
-            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+        <!-- Bootstrap CDN -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
-            <!--Bootswatch-->
-            <link rel="stylesheet" href="https://bootswatch.com/4/slate/bootstrap.min.css">
+        <!--Bootswatch-->
+        <link rel="stylesheet" href="https://bootswatch.com/4/slate/bootstrap.min.css">
 
-            <!-- Custom CSS-->
-            <link rel="stylesheet" href="assets/css/style.css">
+        <!-- Custom CSS-->
+        <link rel="stylesheet" href="assets/css/style.css">
 
-            <!-- Firebase CDN -->
-            <script src="https://www.gstatic.com/firebasejs/5.3.1/firebase.js"></script>
+        <!-- Firebase CDN -->
+        <script src="https://www.gstatic.com/firebasejs/5.3.1/firebase.js"></script>
 
-            <!-- JQuery CDN -->
-            <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-                crossorigin="anonymous"></script>
+        <!-- JQuery CDN -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
 
-            <!-- Custom Javascript-->
-            <script src="assets/logic.js"></script>
+        <!-- Custom Javascript-->
+        <script src="assets/logic.js"></script>
 
 </body>
 

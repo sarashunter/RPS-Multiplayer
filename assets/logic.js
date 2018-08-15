@@ -161,6 +161,7 @@ $("#userChoice").on("click", function (event) {
         $("#options").text("Others are playing.  You can watch and chat.");
     }
 
+    $("#submitChat").html('                            <input class="form-control" type="text" id="messageText" placeholder="Say something!"><br><button class="btn btn-primary" id="postMessage">Post</button>');
     //Remove username input box after username is chosen
     $("#enterUser").empty();
 
@@ -331,7 +332,7 @@ mainChatRef.limitToLast(8).on("child_added", function (snapshot) {
 })
 
 //Function called when post message button is clicked.
-$("#postMessage").on("click", function (event) {
+$("#submitChat").on("click", "#postMessage", function (event) {
 
     event.preventDefault();
 
